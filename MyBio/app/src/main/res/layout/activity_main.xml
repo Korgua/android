@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@android:color/holo_green_dark"
+    android:theme="@style/AppTheme.NoActionBar"
+    tools:context="com.example.korgua.mybio.MainActivity">
+
+    <ImageView
+        android:id="@+id/ImageBachId"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_marginTop="@dimen/mediumMargin"
+        android:background="@drawable/bach"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+    <TextView
+        android:id="@+id/TextViewBachId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/bach"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ImageBachId"
+        android:layout_marginTop="@dimen/smallMargin"
+        />
+    
+    <ImageView
+        android:id="@+id/ImageMozartId"
+        android:layout_width="210dp"
+        android:layout_height="210dp"
+        android:layout_marginTop="@dimen/largeMargin"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/TextViewBachId"
+        android:background="@drawable/mozart" />
+
+
+    <TextView
+        android:id="@+id/TextViewMozartId"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/mozart"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ImageMozartId"
+        android:layout_marginTop="@dimen/smallMargin"
+        />
+</android.support.constraint.ConstraintLayout>

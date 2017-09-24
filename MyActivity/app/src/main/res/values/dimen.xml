@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- **** Text sizes **** -->
+    <dimen name="smallText">10sp</dimen>
+    <dimen name="mediumText">20sp</dimen>
+    <dimen name="largeText">30sp</dimen>
+    <!-- ******************** -->
+
+    <!-- **** Margins **** -->
+    <dimen name="smallMargin">8dp</dimen>
+    <dimen name="mediumMargin">16dp</dimen>
+    <dimen name="largeMargin">32dp</dimen>
+    <!-- ******************** -->
+
+    <!-- **** Padding **** -->
+    <dimen name="smallPadding">4dp</dimen>
+    <dimen name="mediumPadding">6dp</dimen>
+    <dimen name="largePadding">8dp</dimen>
+    <!-- ******************** -->
+
+</resources>

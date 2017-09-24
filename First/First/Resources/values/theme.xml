@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <color name="theme_black_notitlebar_fullscreen_background">#ff00b8d4</color>
+  <style name="Theme.Custom" parent="@android:style/Theme.Black.NoTitleBar.Fullscreen">
+    <item name="android:colorBackground">@color/theme_black_notitlebar_fullscreen_background</item>
+    <item name="android:windowBackground">?android:attr/colorBackground</item>
+  <item name="android:textColorPrimary">?android:attr/colorForegroundInverse</item></style>
+</resources>

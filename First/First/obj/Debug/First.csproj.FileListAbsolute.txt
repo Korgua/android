@@ -1,0 +1,16 @@
+D:\git\android\First\First\bin\Debug\First.dll
+D:\git\android\First\First\bin\Debug\First.pdb
+D:\git\android\First\First\bin\Debug\First.First.apk
+D:\git\android\First\First\bin\Debug\First.First-Signed.apk
+D:\git\android\First\First\obj\Debug\First.csprojResolveAssemblyReference.cache
+D:\git\android\First\First\obj\Debug\First.csproj.CoreCompileInputs.cache
+D:\git\android\First\First\obj\Debug\First.dll
+D:\git\android\First\First\obj\Debug\First.pdb
+D:\git\android\First\First\obj\Debug\android\bin\First.First.apk
+D:\git\android\First\First\obj\Debug\res\layout\main.xml
+D:\git\android\First\First\obj\Debug\res\values\strings.xml
+D:\git\android\First\First\obj\Debug\R.cs.flag
+D:\git\android\First\First\obj\Debug\uploadflags.txt
+D:\git\android\First\First\bin\Debug\First.dll.mdb
+D:\git\android\First\First\obj\Debug\android\assets\First.dll.mdb
+D:\git\android\First\First\obj\Debug\res\values\theme.xml

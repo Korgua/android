@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">MyActivity</string>
+    <string name="secondActivity">I am the Second Activity</string>
+    <string name="firstActivity">I am the first Activity</string>
+    <string name="changeActivity">Change to the other activity</string>
+    <string name="mozart">Wolfgang Amodeus Mozart</string>
+    <string name="bach">Johann Sebastian Bach</string>
+    <string name="title_activity_second">secondActivity</string>
+
+</resources>
