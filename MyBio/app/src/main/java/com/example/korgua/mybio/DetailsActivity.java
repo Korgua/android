@@ -2,12 +2,10 @@ package com.example.korgua.mybio;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.inputmethodservice.KeyboardView;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class DetailsActivity extends Activity {
     private ImageView imageDetail;
@@ -35,10 +33,8 @@ public class DetailsActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        //super.onBackPressed();
-        Toast.makeText(getApplicationContext(),"Toast from relative layout",Toast.LENGTH_LONG).show();
         Intent returnIntent = getIntent();
-        returnIntent.putExtra("returnData","I am from the second activity");
+        returnIntent.putExtra("returnData","Back button pressed from: "+extras.get("name"));
         setResult(RESULT_OK,returnIntent);
         finish();
     }
