@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">SeekBar</string>
+    <string name="textView_question">On a scale of 1 to 10, how nice are u?</string>
+</resources>
