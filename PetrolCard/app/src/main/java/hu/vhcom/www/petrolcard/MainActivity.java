@@ -8,7 +8,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import StoreData.Data;
-import Utils.Utils;
+import Utils.*;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -30,6 +30,6 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Stored code",storedCode);
             Toast.makeText(MainActivity.this,"Stored code: "+storedCode,Toast.LENGTH_LONG).show();
         }
-
+        PartnersHttpClient partnersHttpClient = new PartnersHttpClient();
     }
 }
