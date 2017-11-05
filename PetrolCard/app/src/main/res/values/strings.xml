@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">PetrolCard</string>
+    <string name="vhServiceCode">Szervíz kód:</string>
+
+
+    <!-- Errors -->
+    <string name="code_saved">A szervízkód sikeresen elmentve</string>
+    <string name="code_saving_error">A szervízkód mentése sikertelen</string>
+    <string name="code_format_error">Helytelen kód! A helyes formátum: 1234x</string>
+
+</resources>
