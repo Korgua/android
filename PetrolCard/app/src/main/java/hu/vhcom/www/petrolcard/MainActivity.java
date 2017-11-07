@@ -30,6 +30,6 @@ public class MainActivity extends AppCompatActivity {
             Log.v("Stored code",storedCode);
             Toast.makeText(MainActivity.this,"Stored code: "+storedCode,Toast.LENGTH_LONG).show();
         }
-        PartnersHttpClient partnersHttpClient = new PartnersHttpClient();
+        PartnersHttpClient partnersHttpClient = new PartnersHttpClient(MainActivity.this);
     }
 }

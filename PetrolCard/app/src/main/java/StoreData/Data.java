@@ -33,7 +33,6 @@ public class Data extends AppCompatActivity{
             catch (Exception e){
                 Log.v("Exception",e.toString());
             }
-            Log.v("Data.StoreData stored code",getData(key));
         }
     }
 
@@ -41,11 +40,9 @@ public class Data extends AppCompatActivity{
         String value;
         SharedPreferences sharedPreferences = context.getSharedPreferences(Utils.PREFS_NAME,0);
         if(key.equals("")){
-            Log.v("StoreData: ","Key is empty");
         }
         else {
             value = sharedPreferences.getString(key,"00000");
-            Log.v("stored code",Utils.PREFS_NAME);
             return value;
         }
         return key;
@@ -59,7 +56,6 @@ public class Data extends AppCompatActivity{
             editor.apply();
         }
         catch (Exception e){
-            Log.v("deleteData exception",e.toString());
         }
     }
 }

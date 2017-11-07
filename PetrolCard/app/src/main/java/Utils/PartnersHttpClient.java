@@ -1,13 +1,17 @@
 package Utils;
 
 
+import android.app.Activity;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
 import java.io.IOException;
-import java.util.Stack;
+import java.net.MalformedURLException;
 
+import StoreData.Data;
+import hu.vhcom.www.petrolcard.MainActivity;
 import okhttp3.Authenticator;
 import okhttp3.Credentials;
 import okhttp3.OkHttpClient;
@@ -20,8 +24,14 @@ import okhttp3.Route;
  * Created by korgua on 2017. 11. 05..
  */
 
-public class PartnersHttpClient {
+public class PartnersHttpClient extends Activity{
     private static Response rsp;
+    private static Data data;
+    private Context context;
+    private static boolean executed = false;
+
+
+
 
     private static OkHttpClient createAuthenticatedClient(final String username, final String password) {
         // build client with authentication information.
@@ -41,27 +51,58 @@ public class PartnersHttpClient {
     private static Response doRequest(OkHttpClient httpClient, String anyURL) throws Exception {
         Request request = new Request.Builder().url(anyURL).build();
         Response response = httpClient.newCall(request).execute();
-        ResponseBody responseBodyCopy = response.peekBody(Long.MAX_VALUE);
+        Log.v("Response",response.networkResponse().toString());
         rsp = response;
         if (!response.isSuccessful()) {
-            Log.v("isSuccessful",response.header("WWW-Authenticate"));
+            String responseHeader = response.header("WWW-Authenticate");
 
-            OkHttpClient client = new OkHttpClient();
-            request = new Request.Builder().url(Utils.PETROLCARD_DATA).build();
-            response = httpClient.newCall(request).execute();
-            //Log.v("res",response.challenges().toString());
-            //if(responseBodyCopy.string().equals("Access denied.")){
-            //}
-            //throw new IOException("Unexpected code " + response);
         }
+
+        return response;
+    }
+
+    private static Response doHeaderRequest(OkHttpClient httpClient, String anyURL) throws Exception {
+        String phpSessID = "";
+        Request request = null;
+        Response response = null;
+            request = new Request.Builder().url(anyURL).build();
+            response = httpClient.newCall(request).execute();
+            httpClient.newCall(request).execute();
+                phpSessID = response.headers("Set-Cookie").toString();
+                String[] phpSessIDParts = phpSessID.split(";");
+                StringBuilder sb = new StringBuilder();
+                for (int i = 1; i < phpSessIDParts[0].length(); i++)
+                    sb.append(phpSessIDParts[0].charAt(i));
+                phpSessID = sb.toString();
+                data.storeData("cookie", phpSessID);
+
+            Log.v("PHPSESSID",phpSessID);
+            Log.v("Stored sess_id",data.getData("cookie"));
+        String responseHeader = response.header("WWW-Authenticate");
+        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
+        String[] responseHeaderParts = responseHeader.split("-");
+        String VhServiceCodeFromRealm = responseHeaderParts[1].toString();
+        Log.v("VhServiceCodeFromRealm",VhServiceCodeFromRealm+", "+data.getData(Utils.SERVICE_CODE_KEY));
+        CodeCalculator codeCalculator = new CodeCalculator(VhServiceCodeFromRealm,data.getData(Utils.SERVICE_CODE_KEY));
+        String responseCode = codeCalculator.Calc();
+        //httpClient = createAuthenticatedClient("vhcom", responseCode);
+        request = new Request.Builder().url(anyURL).header("Cookie",phpSessID).build();
+        response = httpClient.newCall(request).execute();
+        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
+        Log.v("Response",response.body().string());
+        httpClient = createAuthenticatedClient("vhcom", responseCode);
+        request = new Request.Builder().url(anyURL).header("Cookie",phpSessID).build();
+        response = httpClient.newCall(request).execute();
+        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
+        Log.v("Response",response.body().string());
         return response;
     }
 
 
     public static Response fetch(String url, String username, String password) throws Exception {
-        OkHttpClient httpClient = createAuthenticatedClient(username, password);
+        OkHttpClient httpClient = new OkHttpClient();
         // execute request
-        return doRequest(httpClient, url);
+        return doHeaderRequest(httpClient, url);
     }
 
     private static int responseCount(Response response) {
@@ -73,12 +114,15 @@ public class PartnersHttpClient {
     }
 
     public void testFetchFailed() throws Exception {
-        String url = Utils.PETROLCARD_DATA;
+        String url = Utils.PETROLCARD_URL;
         Response response = fetch(url, "user", "passwd");
         Log.v("Response", response.toString());
     }
 
-    public PartnersHttpClient() {
+    public PartnersHttpClient(Context context) {
+        this.data = new Data(context);
+        this.context = context;
+        Log.v("almakecskeborsó",data.getData(Utils.SERVICE_CODE_KEY));
         AsyncRequest asyncRequest = new AsyncRequest();
         asyncRequest.execute("");
     }
@@ -88,8 +132,8 @@ public class PartnersHttpClient {
 
         Response response = null;
         try {
-            response = doRequest(client, Utils.PETROLCARD_DATA);
-            Log.v("alma",response.body().string());
+            response = doHeaderRequest(client, Utils.PETROLCARD_DATA);
+            //Log.v("alma",response.body().string());
         } catch (Exception e) {
             e.printStackTrace();
         }
