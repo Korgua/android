@@ -14,7 +14,6 @@ public class MainActivity extends AppCompatActivity {
 
     private TextView a;
     private Data data;
-    private static String storedCode;
     private static Utils utils;
 
     @Override
@@ -24,12 +23,12 @@ public class MainActivity extends AppCompatActivity {
 
         data = new Data(MainActivity.this);
         utils = new Utils();
-        storedCode = data.getData(utils.SERVICE_CODE_KEY);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
+        String storedCode = data.getData(utils.SERVICE_CODE_KEY);
         if(storedCode.equals("") || storedCode.equals("00000")){
             startActivity(new Intent(MainActivity.this,service_code.class));
         }else{
@@ -45,7 +44,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void auth(){
         //utils = new Utils();
-        storedCode = data.getData(utils.SERVICE_CODE_KEY);
+        String storedCode = data.getData(utils.SERVICE_CODE_KEY);
         Log.v("Stored code",storedCode);
         Toast.makeText(MainActivity.this,"Stored code: "+data.getData(utils.SERVICE_CODE_KEY),Toast.LENGTH_LONG).show();
         PartnersHttpClient partnersHttpClient = new PartnersHttpClient(MainActivity.this);

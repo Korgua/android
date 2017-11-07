@@ -7,6 +7,8 @@ import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import org.json.JSONObject;
+
 import java.io.IOException;
 import java.net.MalformedURLException;
 
@@ -25,10 +27,9 @@ import okhttp3.Route;
  */
 
 public class PartnersHttpClient extends Activity{
-    private static Response rsp;
-    private static Data data;
-    private Context context;
-    private static boolean executed = false;
+    public Data data;
+    public Context context;
+    public static JSONObject PETROLCARD_DATA = new JSONObject();
 
 
 
@@ -47,75 +48,59 @@ public class PartnersHttpClient extends Activity{
         return httpClient;
     }
 
-
-    private static Response doRequest(OkHttpClient httpClient, String anyURL) throws Exception {
-        Request request = new Request.Builder().url(anyURL).build();
-        Response response = httpClient.newCall(request).execute();
-        Log.v("Response",response.networkResponse().toString());
-        rsp = response;
-        if (!response.isSuccessful()) {
-            String responseHeader = response.header("WWW-Authenticate");
-
-        }
-
-        return response;
-    }
-
-    private static String getCookie(OkHttpClient httpClient, String anyURL) throws Exception{
+    public static void getCookieAndRealmCode(OkHttpClient httpClient, String anyURL) throws Exception {
         Request request = new Request.Builder().url(anyURL).build();
         Response response = httpClient.newCall(request).execute();
         httpClient.newCall(request).execute();
-        String phpSessID = response.headers("Set-Cookie").toString();
-        String[] phpSessIDParts = phpSessID.split(";");
+
+        //Get cookie
+        String phpSessionID = response.headers("Set-Cookie").toString();
+        String[] phpSessIDParts = phpSessionID.split(";");
         StringBuilder sb = new StringBuilder();
-        for (int i = 1; i < phpSessIDParts[0].length(); i++)
+        for (int i = 1; i < phpSessIDParts[0].length(); i++){
             sb.append(phpSessIDParts[0].charAt(i));
-        phpSessID = sb.toString();
-        data.storeData("cookie", phpSessID);
-        return phpSessID;
+        }
+        phpSessionID = sb.toString();
+
+        //Get realmCode
+        String realmCode = response.header("WWW-Authenticate");
+        String[] realmCodeParts = realmCode.split("-");
+        realmCode = realmCodeParts[1];
+        Log.v("getCookie --> realmCode",realmCode);
+        Log.v("getCookie --> cookie",phpSessionID);
+        PETROLCARD_DATA.put("realmCode",realmCode);
+        PETROLCARD_DATA.put("cookie",phpSessionID);
     }
 
-    private static Response doHeaderRequest(OkHttpClient httpClient, String anyURL) throws Exception {
-        String phpSessID = "";
-        Request request = null;
-        Response response = null;
-            request = new Request.Builder().url(anyURL).build();
-            response = httpClient.newCall(request).execute();
-            httpClient.newCall(request).execute();
-                phpSessID = response.headers("Set-Cookie").toString();
-                String[] phpSessIDParts = phpSessID.split(";");
-                StringBuilder sb = new StringBuilder();
-                for (int i = 1; i < phpSessIDParts[0].length(); i++)
-                    sb.append(phpSessIDParts[0].charAt(i));
-                phpSessID = sb.toString();
-                data.storeData("cookie", phpSessID);
-
-            Log.v("PHPSESSID",phpSessID);
-            Log.v("Stored sess_id",data.getData("cookie"));
-        String responseHeader = response.header("WWW-Authenticate");
-        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
-        String[] responseHeaderParts = responseHeader.split("-");
-        String VhServiceCodeFromRealm = responseHeaderParts[1].toString();
-        Log.v("VhServiceCodeFromRealm",VhServiceCodeFromRealm+", "+data.getData(Utils.SERVICE_CODE_KEY));
-        CodeCalculator codeCalculator = new CodeCalculator(VhServiceCodeFromRealm,data.getData(Utils.SERVICE_CODE_KEY));
-        String responseCode = codeCalculator.Calc();
-        request = new Request.Builder().url(anyURL).header("Cookie",phpSessID).build();
-        response = httpClient.newCall(request).execute();
-        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
-        Log.v("Response",response.body().string());
-        httpClient = createAuthenticatedClient("vhcom", responseCode);
-        request = new Request.Builder().url(anyURL).header("Cookie",phpSessID).build();
-        response = httpClient.newCall(request).execute();
-        Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
-        Log.v("Response",response.body().string());
-        return response;
+    public static void fakeHttpRequest(OkHttpClient httpClient, String anyURL, String cookie) throws Exception{
+        String phpSessionId = cookie;
+        Request request = new Request.Builder().url(anyURL).header("Cookie",phpSessionId).build();
+        Response response = httpClient.newCall(request).execute();
+        Log.v("getRealmCode --> responseBody",response.body().string());
     }
 
+    public static void authenticate(OkHttpClient httpClient, String anyURL, String serviceCode)throws Exception{
+        try{
+            getCookieAndRealmCode(httpClient,anyURL);
+            String phpSessionID = PETROLCARD_DATA.getString("cookie");
+            String realmCode = PETROLCARD_DATA.getString("realmCode");
 
-    public static Response fetch(String url, String username, String password) throws Exception {
-        OkHttpClient httpClient = new OkHttpClient();
-        // execute request
-        return doHeaderRequest(httpClient, url);
+            fakeHttpRequest(httpClient,anyURL,phpSessionID);
+
+            Log.v("authenticate --> realmCode",realmCode);
+            Log.v("authenticate --> cookie",phpSessionID);
+            String realmResponseCode = new CodeCalculator(realmCode,serviceCode).Calc();
+            httpClient = createAuthenticatedClient("vhcom", realmResponseCode);
+            Request request = new Request.Builder().url(anyURL).header("Cookie",phpSessionID).build();
+            Response response = httpClient.newCall(request).execute();
+            Log.v("authenticate",response.message());
+            Log.v("authenticate",response.body().string());
+            if(!response.isSuccessful())
+                throw new Exception();
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     private static int responseCount(Response response) {
@@ -131,26 +116,11 @@ public class PartnersHttpClient extends Activity{
         this.data = new Data(context);
         this.context = context;
         AsyncRequest asyncRequest = new AsyncRequest();
-        asyncRequest.execute("");
+        asyncRequest.execute(data);
     }
 
-    public static void alma(){
-        OkHttpClient client = new OkHttpClient();
-
-        Response response = null;
-        try {
-            response = doHeaderRequest(client, Utils.PETROLCARD_DATA);
-            //Log.v("alma",response.body().string());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        //return response.body().string();
-        }
-
 }
-class AsyncRequest extends AsyncTask<String,Void,PartnersHttpClient>{
-        Response response = null;
+class AsyncRequest extends AsyncTask<Data,Void,PartnersHttpClient>{
         @Override
         protected void onPostExecute(PartnersHttpClient partnersHttpClient) {
             //Log.v("Response",response.toString());
@@ -158,11 +128,12 @@ class AsyncRequest extends AsyncTask<String,Void,PartnersHttpClient>{
         }
 
         @Override
-        protected PartnersHttpClient doInBackground(String... strings) {
+        protected PartnersHttpClient doInBackground(Data... dataArray) {
+            Data data = dataArray[0];
             String url = Utils.PETROLCARD_DATA;
             try{
-                response = PartnersHttpClient.fetch(url, "user", "passwd");
-                //Log.v("Response",response.body().string());
+                OkHttpClient okHttpClient = new OkHttpClient();
+                PartnersHttpClient.authenticate(okHttpClient,Utils.PETROLCARD_DATA,data.getData(Utils.SERVICE_CODE_KEY));
             }
             catch (Exception e){
                 e.printStackTrace();

@@ -45,7 +45,7 @@ public class Data extends AppCompatActivity{
             value = sharedPreferences.getString(key,"00000");
             return value;
         }
-        return key;
+        return null;
     }
 
     public void deleteData(String key){
