@@ -13,23 +13,42 @@ import Utils.*;
 public class MainActivity extends AppCompatActivity {
 
     private TextView a;
+    private Data data;
+    private static String storedCode;
+    private static Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Utils utils = new Utils();
-        Data data = new Data(MainActivity.this);
-        //data.deleteData(utils.SERVICE_CODE_KEY);
-        String storedCode = data.getData(utils.SERVICE_CODE_KEY);
 
-        a = (TextView)findViewById(R.id.vhServiceCodeTextView);
+        data = new Data(MainActivity.this);
+        utils = new Utils();
+        storedCode = data.getData(utils.SERVICE_CODE_KEY);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         if(storedCode.equals("") || storedCode.equals("00000")){
             startActivity(new Intent(MainActivity.this,service_code.class));
         }else{
-            Log.v("Stored code",storedCode);
-            Toast.makeText(MainActivity.this,"Stored code: "+storedCode,Toast.LENGTH_LONG).show();
+            auth();
         }
+    }
+
+    @Override
+    public void onActivityReenter(int resultCode, Intent data) {
+        //super.onActivityReenter(resultCode, data);
+        auth();
+    }
+
+    public void auth(){
+        //utils = new Utils();
+        storedCode = data.getData(utils.SERVICE_CODE_KEY);
+        Log.v("Stored code",storedCode);
+        Toast.makeText(MainActivity.this,"Stored code: "+data.getData(utils.SERVICE_CODE_KEY),Toast.LENGTH_LONG).show();
         PartnersHttpClient partnersHttpClient = new PartnersHttpClient(MainActivity.this);
     }
+
 }

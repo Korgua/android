@@ -61,6 +61,20 @@ public class PartnersHttpClient extends Activity{
         return response;
     }
 
+    private static String getCookie(OkHttpClient httpClient, String anyURL) throws Exception{
+        Request request = new Request.Builder().url(anyURL).build();
+        Response response = httpClient.newCall(request).execute();
+        httpClient.newCall(request).execute();
+        String phpSessID = response.headers("Set-Cookie").toString();
+        String[] phpSessIDParts = phpSessID.split(";");
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < phpSessIDParts[0].length(); i++)
+            sb.append(phpSessIDParts[0].charAt(i));
+        phpSessID = sb.toString();
+        data.storeData("cookie", phpSessID);
+        return phpSessID;
+    }
+
     private static Response doHeaderRequest(OkHttpClient httpClient, String anyURL) throws Exception {
         String phpSessID = "";
         Request request = null;
@@ -85,7 +99,6 @@ public class PartnersHttpClient extends Activity{
         Log.v("VhServiceCodeFromRealm",VhServiceCodeFromRealm+", "+data.getData(Utils.SERVICE_CODE_KEY));
         CodeCalculator codeCalculator = new CodeCalculator(VhServiceCodeFromRealm,data.getData(Utils.SERVICE_CODE_KEY));
         String responseCode = codeCalculator.Calc();
-        //httpClient = createAuthenticatedClient("vhcom", responseCode);
         request = new Request.Builder().url(anyURL).header("Cookie",phpSessID).build();
         response = httpClient.newCall(request).execute();
         Log.v("ResponseHeader",response.headers("Set-Cookie").toString());
@@ -113,16 +126,10 @@ public class PartnersHttpClient extends Activity{
         return result;
     }
 
-    public void testFetchFailed() throws Exception {
-        String url = Utils.PETROLCARD_URL;
-        Response response = fetch(url, "user", "passwd");
-        Log.v("Response", response.toString());
-    }
 
     public PartnersHttpClient(Context context) {
         this.data = new Data(context);
         this.context = context;
-        Log.v("almakecskeborsó",data.getData(Utils.SERVICE_CODE_KEY));
         AsyncRequest asyncRequest = new AsyncRequest();
         asyncRequest.execute("");
     }
