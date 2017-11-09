@@ -2,6 +2,7 @@ package StoreData;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.os.Looper;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
@@ -12,7 +13,6 @@ import Utils.Utils;
  */
 
 public class Data extends AppCompatActivity{
-    private Utils utils = new Utils();
     private Context context;
 
     public Data(Context context){

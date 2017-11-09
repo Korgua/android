@@ -17,6 +17,7 @@
             </intent-filter>
         </activity>
         <activity android:name=".service_code"></activity>
+        <activity android:name="Utils.PartnersHttpClient"></activity>
     </application>
 
 </manifest>

@@ -4,6 +4,7 @@ import android.util.Log;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by korgua on 2017. 11. 06..
@@ -31,6 +32,8 @@ public class CodeCalculator {
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F");
         Date now = new Date();
         String date = simpleDateFormat.format(now);
+        Log.v("date",now.toString());
+
         int temp;
         int firstNum,lastNum;
         int dayOfWeek,dayOfMonth,month;
@@ -41,9 +44,11 @@ public class CodeCalculator {
         char persCode_5th_char = PERSONAL_CODE.charAt(4);
         firstNum = INPUT_CODE.charAt(0)-'0';
         lastNum = INPUT_CODE.charAt(4)-'0';
-        dayOfWeek = (new SimpleDateFormat("F").format(now).charAt(0))-'0';
+
+
+
+        dayOfWeek = (new SimpleDateFormat("u").format(now).charAt(0))-'0';
         dayOfMonth = (new SimpleDateFormat("d").format(now).charAt(0))-'0';
-        ++dayOfWeek;
         month = Integer.parseInt(new SimpleDateFormat("MM").format(now))%10;
 
         StringBuilder sb = new StringBuilder();
