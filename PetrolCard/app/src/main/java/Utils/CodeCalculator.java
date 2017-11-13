@@ -29,7 +29,7 @@ public class CodeCalculator {
         //6 + dayOfMonth%10(6) + 0 = 12 % 10 = 2
         //6462x
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F",Locale.getDefault());
         Date now = new Date();
         String date = simpleDateFormat.format(now);
         Log.v("date",now.toString());
@@ -47,9 +47,9 @@ public class CodeCalculator {
 
 
 
-        dayOfWeek = (new SimpleDateFormat("u").format(now).charAt(0))-'0';
-        dayOfMonth = (new SimpleDateFormat("d").format(now).charAt(0))-'0';
-        month = Integer.parseInt(new SimpleDateFormat("MM").format(now))%10;
+        dayOfWeek = Integer.parseInt(new SimpleDateFormat("u",Locale.getDefault()).format(now));
+        dayOfMonth = Integer.parseInt(new SimpleDateFormat("d",Locale.getDefault()).format(now));
+        month = Integer.parseInt(new SimpleDateFormat("MM",Locale.getDefault()).format(now))%10;
 
         StringBuilder sb = new StringBuilder();
 
@@ -68,6 +68,7 @@ public class CodeCalculator {
 
         Log.v("dayOfWeek",Integer.toString(dayOfWeek));
         Log.v("dayOfMonth",Integer.toString(dayOfMonth));
+        Log.v("month",Integer.toString(month));
         Log.v("OUTPUT_CODE",sb.toString());
         this.OUTPUT_CODE = sb.toString();
         return OUTPUT_CODE;

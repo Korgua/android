@@ -21,6 +21,7 @@ import okhttp3.Response;
 import okhttp3.Route;
 
 import java.io.OutputStreamWriter;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by korgua on 2017. 11. 05..
@@ -43,14 +44,19 @@ public class PartnersHttpClient extends Activity{
 
     private static OkHttpClient createAuthenticatedClient(final String username, final String password) {
         // build client with authentication information.
-        OkHttpClient httpClient = new OkHttpClient.Builder().authenticator(new Authenticator() {
-            public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
-                String credential = Credentials.basic(username, password);
-                if (responseCount(response) >= 3) {
-                    return null;
-                }
-                return response.request().newBuilder().header("Authorization", credential).build();
-            }
+        OkHttpClient httpClient = new OkHttpClient
+                                    .Builder()
+                                    .connectTimeout(120,TimeUnit.SECONDS)
+                                    .readTimeout(120,TimeUnit.SECONDS)
+                                    .writeTimeout(120,TimeUnit.SECONDS).
+                                    authenticator(new Authenticator() {
+                                        public Request authenticate(@NonNull Route route, @NonNull Response response) throws IOException {
+                                            String credential = Credentials.basic(username, password);
+                                            if (responseCount(response) >= 3) {
+                                                return null;
+                                            }
+                                            return response.request().newBuilder().header("Authorization", credential).build();
+                                        }
         }).build();
         return httpClient;
     }
@@ -181,8 +187,13 @@ class AsyncRequest extends AsyncTask<JSONObject, Void,PartnersHttpClient> {
         protected PartnersHttpClient doInBackground(JSONObject... jsonArr) {
             try{
                 String url = Utils.PETROLCARD_DATA;
+                OkHttpClient.Builder client = new OkHttpClient()
+                                        .newBuilder()
+                                        .connectTimeout(120,TimeUnit.SECONDS)
+                                        .readTimeout(120,TimeUnit.SECONDS)
+                                        .writeTimeout(120,TimeUnit.SECONDS);
                 String service_code = PartnersHttpClient.getPetrolcardData().getString(Utils.SERVICE_CODE_KEY);
-                PartnersHttpClient.authenticate(new OkHttpClient(),url,service_code);
+                PartnersHttpClient.authenticate(client.build(),url,service_code);
             }
             catch (Exception e){
                 e.printStackTrace();
