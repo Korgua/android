@@ -62,6 +62,7 @@ public class PartnersHttpClient extends Activity{
     }
 
     public static void getCookieAndRealmCode(OkHttpClient httpClient, String anyURL) throws Exception {
+        Log.v("getCookieAndRealmCode --> url", anyURL);
         Request request = new Request.Builder().url(anyURL).build();
         Response response = httpClient.newCall(request).execute();
         httpClient.newCall(request).execute();
@@ -96,8 +97,8 @@ public class PartnersHttpClient extends Activity{
         Request request = new Request.Builder()
                                 .url(anyURL)
                                 .header("Cookie",phpSessionId)
-                                .addHeader("Origin","http://petrolcard.hu:7621")
-                                .addHeader("Referer","http://petrolcard.hu:7621/new/index.php")
+                                .addHeader("Origin",Utils.PETROLCARD_BASE_URL)
+                                .addHeader("Referer",Utils.PETROLCARD_NEW+"index.php")
                                 .addHeader("User-Agent","Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36")
                                 .build();
         Response response = httpClient.newCall(request).execute();
@@ -110,7 +111,7 @@ public class PartnersHttpClient extends Activity{
         Data data = new Data(context);
         String phpSessionID = data.getData("cookie");
         try{
-            String xml = PartnersHttpClient.connectPetrolcardData(new OkHttpClient(),"http://petrolcard.hu:7621/new/data.php?sortby=company&ver=1.41&hash=",phpSessionID);
+            String xml = PartnersHttpClient.connectPetrolcardData(new OkHttpClient(),Utils.PETROLCARD_DATA,phpSessionID);
             String file_name = "petrolcard_data.xml";
             try {
                 OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput(file_name, Context.MODE_PRIVATE));
@@ -129,6 +130,7 @@ public class PartnersHttpClient extends Activity{
 
     public static JSONObject authenticate(OkHttpClient httpClient, String anyURL, String serviceCode)throws Exception{
         try{
+            Log.v("authenticate --> url", anyURL);
             getCookieAndRealmCode(httpClient,anyURL);
             String phpSessionID = PETROLCARD_DATA.getString("cookie");
             String realmCode = PETROLCARD_DATA.getString("realmCode");
@@ -180,13 +182,14 @@ public class PartnersHttpClient extends Activity{
 class AsyncRequest extends AsyncTask<JSONObject, Void,PartnersHttpClient> {
         @Override
         protected void onPostExecute(PartnersHttpClient partnersHttpClient) {
-            //PartnersHttpClient.exportXMLfromPetrolcard(partnersHttpClient.getContext());
+            PartnersHttpClient.exportXMLfromPetrolcard(partnersHttpClient.getContext());
         }
 
         @Override
         protected PartnersHttpClient doInBackground(JSONObject... jsonArr) {
             try{
-                String url = Utils.PETROLCARD_DATA;
+                String url = Utils.PETROLCARD_AUTH;
+
                 OkHttpClient.Builder client = new OkHttpClient()
                                         .newBuilder()
                                         .connectTimeout(120,TimeUnit.SECONDS)
