@@ -6,32 +6,23 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-/**
- * Created by korgua on 2017. 11. 06..
- */
-
 public class CodeCalculator {
     private static String INPUT_CODE;
-    private static String OUTPUT_CODE;
+
+    private static void setInputCode(String inputCode) {INPUT_CODE = inputCode;}
+
+    private static void setPersonalCode(String personalCode) {PERSONAL_CODE = personalCode;}
+
     private static String PERSONAL_CODE;
 
     public CodeCalculator(String inputCode, String personalCode) {
-        this.INPUT_CODE = inputCode;
-        this.PERSONAL_CODE = personalCode;
+        setInputCode(inputCode);
+        setPersonalCode(personalCode);
     }
 
-    public String Calc(){
-        //0710x
-        //51243 --> 5 x 3 = 15 % 10 = 5;
-        //5 + dayOfWeek(1) + 0 = 6
-        //6 + month%10(1) + 7 = 14%10 = 4
-        //4 + floor(dayOfMonth / 10)(1) + 1 = 6
-        //6 + dayOfMonth%10(6) + 0 = 12 % 10 = 2
-        //6462x
 
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("F",Locale.getDefault());
+    public String Calc(){
         Date now = new Date();
-        String date = simpleDateFormat.format(now);
         Log.v("date",now.toString());
 
         int temp;
@@ -70,8 +61,8 @@ public class CodeCalculator {
         Log.v("dayOfMonth",Integer.toString(dayOfMonth));
         Log.v("month",Integer.toString(month));
         Log.v("OUTPUT_CODE",sb.toString());
-        this.OUTPUT_CODE = sb.toString();
-        return OUTPUT_CODE;
+
+        return sb.toString();
     }
 
 }

@@ -16,7 +16,6 @@ public class service_code extends Activity {
     private EditText vhServiceCode;
     private Button vhServiceButton;
     private Data data;
-    private Utils utils = new Utils();
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -29,10 +28,10 @@ public class service_code extends Activity {
             @Override
             public void onClick(View view) {
                 String serviceCode = vhServiceCode.getText().toString();
-                Regexp regexp = new Regexp(serviceCode,utils.vhServiceCodeRegexp);
+                Regexp regexp = new Regexp(serviceCode,Utils.getVhServiceCodeRegexp());
                 if(regexp.getResult()){
                     try {
-                        data.storeData(Utils.SERVICE_CODE_KEY, serviceCode);
+                        data.storeData(Utils.getServiceCodeKey(), serviceCode);
                         Toast.makeText(service_code.this,R.string.code_saved,Toast.LENGTH_LONG).show();
                         finish();
                         /*Intent intent = new Intent(service_code.this,MainActivity.class);
